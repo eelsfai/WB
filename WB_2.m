@@ -21,18 +21,18 @@ fprintf(fileID2,c);
 options = weboptions('Timeout', 90);
 
 % https://www.nasdaq.com/screening/company-list.aspx
-company = loadCompaniesNASDAQ;
-%company = loadCompaniesNYSE;
-% company = loadCompaniesAMEX;
+company{1} = loadCompaniesNASDAQ;
+company{2} = loadCompaniesNYSE;
+company{3} = loadCompaniesAMEX;
+company{4} = loadCompaniesCanada; % https://api.tmxmoney.com/en/migreport/search
 
-%company = loadCompaniesCanada; % https://api.tmxmoney.com/en/migreport/search
-
-for j=1:1:size(company,1)
+for i=1:4
+for j=1:1:size(company{i},1)
     
     try
     %% read Income Statement
-    company(j,:)
-    url = ['http://www.marketwatch.com/investing/stock/',company(j,:),'/financials/'];
+    company{i}(j,:)
+    url = ['http://www.marketwatch.com/investing/stock/',company{i}(j,:),'/financials/'];
     url = strrep(url,' ','');
     %     query  = 'urlread2';
     %     params = {'term' query};
@@ -123,7 +123,7 @@ for j=1:1:size(company,1)
             %% Read Balance Sheet
             clear text
             
-            url = ['http://www.marketwatch.com/investing/stock/',company(j,:),'/financials/balance-sheet'];
+            url = ['http://www.marketwatch.com/investing/stock/',company{i}(j,:),'/financials/balance-sheet'];
             url = strrep(url,' ','');
             %             query  = 'urlread2';
             %             params = {'term' query};
@@ -178,7 +178,7 @@ for j=1:1:size(company,1)
             
             
             %% read Cash Flow
-            url = ['http://www.marketwatch.com/investing/stock/',company(j,:),'/financials/cash-flow'];
+            url = ['http://www.marketwatch.com/investing/stock/',company{i}(j,:),'/financials/cash-flow'];
             url = strrep(url,' ','');
             %             query  = 'urlread2';
             %             params = {'term' query};
@@ -227,7 +227,7 @@ for j=1:1:size(company,1)
             
             
             %% read Key Statistics
-            url = ['http://www.marketwatch.com/investing/stock/',company(j,:),''];
+            url = ['http://www.marketwatch.com/investing/stock/',company{i}(j,:),''];
             url = strrep(url,' ','');
             %             query  = 'urlread2';
             %             params = {'term' query};
@@ -292,10 +292,10 @@ for j=1:1:size(company,1)
                 C(8) = (NetIncome(5)>=0.9*NetIncome(4))&&(NetIncome(4)>=0.9*NetIncome(3))&&(NetIncome(3)>=0.9*NetIncome(2))&&(NetIncome(2)>=0.9*NetIncome(1)); % NetIncome stable growth
                 %% print
                 if C(1)&&C(2)&&C(3)&&C(4)&&C(5)&&C(6)&&C(7)&&C(8)
-                    c = ['\n','',company(j,:),'','	',num2str(EpS(1)),'	',num2str(EpS(2)),'	',num2str(EpS(3)),'	',num2str(EpS(4)),'	',num2str(EpS(5)),'	',num2str(MarketCap/1000000),'M		',num2str(TotalEquity(5)/1000000),'M	',num2str((f(2)-f(1))),'	',num2str(PoverE),'	',num2str(Rev(1)/1000000),'M	',num2str(Rev(2)/1000000),'M	',num2str(Rev(3)/1000000),'M	',num2str(Rev(4)/1000000),'M	',num2str(Rev(5)/1000000),'M	',num2str((fR(2)-fR(1))),'	',num2str(NetIncome(1)/1000000),'M	',num2str(NetIncome(2)/1000000),'M	',num2str(NetIncome(3)/1000000),'M	',num2str(NetIncome(4)/1000000),'M	',num2str(NetIncome(5)/1000000),'M	',currency,' 		',num2str(100*NetIncome(1)/TotalEquity(1)),'	',num2str(100*NetIncome(2)/TotalEquity(2)),'	',num2str(100*NetIncome(3)/TotalEquity(3)),'	',num2str(100*NetIncome(4)/TotalEquity(4)),'	',num2str(100*NetIncome(5)/TotalEquity(5)),'	',num2str(PM),'	',num2str(Yield),'%% '];
+                    c = ['\n','',company{i}(j,:),'','	',num2str(EpS(1)),'	',num2str(EpS(2)),'	',num2str(EpS(3)),'	',num2str(EpS(4)),'	',num2str(EpS(5)),'	',num2str(MarketCap/1000000),'M		',num2str(TotalEquity(5)/1000000),'M	',num2str((f(2)-f(1))),'	',num2str(PoverE),'	',num2str(Rev(1)/1000000),'M	',num2str(Rev(2)/1000000),'M	',num2str(Rev(3)/1000000),'M	',num2str(Rev(4)/1000000),'M	',num2str(Rev(5)/1000000),'M	',num2str((fR(2)-fR(1))),'	',num2str(NetIncome(1)/1000000),'M	',num2str(NetIncome(2)/1000000),'M	',num2str(NetIncome(3)/1000000),'M	',num2str(NetIncome(4)/1000000),'M	',num2str(NetIncome(5)/1000000),'M	',currency,' 		',num2str(100*NetIncome(1)/TotalEquity(1)),'	',num2str(100*NetIncome(2)/TotalEquity(2)),'	',num2str(100*NetIncome(3)/TotalEquity(3)),'	',num2str(100*NetIncome(4)/TotalEquity(4)),'	',num2str(100*NetIncome(5)/TotalEquity(5)),'	',num2str(PM),'	',num2str(Yield),'%% '];
                     fprintf(fileID,c);
                 else
-                    c = ['\n','',company(j,:),'','	',num2str(EpS(1)),'	',num2str(EpS(2)),'	',num2str(EpS(3)),'	',num2str(EpS(4)),'	',num2str(EpS(5)),'	',num2str(MarketCap/1000000),'M		',num2str(TotalEquity(5)/1000000),'M	',num2str((f(2)-f(1))),'	',num2str(PoverE),'	',num2str(Rev(1)/1000000),'M	',num2str(Rev(2)/1000000),'M	',num2str(Rev(3)/1000000),'M	',num2str(Rev(4)/1000000),'M	',num2str(Rev(5)/1000000),'M	',num2str((fR(2)-fR(1))),'	',num2str(NetIncome(1)/1000000),'M	',num2str(NetIncome(2)/1000000),'M	',num2str(NetIncome(3)/1000000),'M	',num2str(NetIncome(4)/1000000),'M	',num2str(NetIncome(5)/1000000),'M	',currency,' 		',num2str(100*NetIncome(1)/TotalEquity(1)),'	',num2str(100*NetIncome(2)/TotalEquity(2)),'	',num2str(100*NetIncome(3)/TotalEquity(3)),'	',num2str(100*NetIncome(4)/TotalEquity(4)),'	',num2str(100*NetIncome(5)/TotalEquity(5)),'	',num2str(PM),'	',num2str(Yield),'%% '];
+                    c = ['\n','',company{i}(j,:),'','	',num2str(EpS(1)),'	',num2str(EpS(2)),'	',num2str(EpS(3)),'	',num2str(EpS(4)),'	',num2str(EpS(5)),'	',num2str(MarketCap/1000000),'M		',num2str(TotalEquity(5)/1000000),'M	',num2str((f(2)-f(1))),'	',num2str(PoverE),'	',num2str(Rev(1)/1000000),'M	',num2str(Rev(2)/1000000),'M	',num2str(Rev(3)/1000000),'M	',num2str(Rev(4)/1000000),'M	',num2str(Rev(5)/1000000),'M	',num2str((fR(2)-fR(1))),'	',num2str(NetIncome(1)/1000000),'M	',num2str(NetIncome(2)/1000000),'M	',num2str(NetIncome(3)/1000000),'M	',num2str(NetIncome(4)/1000000),'M	',num2str(NetIncome(5)/1000000),'M	',currency,' 		',num2str(100*NetIncome(1)/TotalEquity(1)),'	',num2str(100*NetIncome(2)/TotalEquity(2)),'	',num2str(100*NetIncome(3)/TotalEquity(3)),'	',num2str(100*NetIncome(4)/TotalEquity(4)),'	',num2str(100*NetIncome(5)/TotalEquity(5)),'	',num2str(PM),'	',num2str(Yield),'%% '];
                     fprintf(fileID2,c);
                 end
                 
@@ -303,6 +303,7 @@ for j=1:1:size(company,1)
         end
     end
     end
+end
 end
 fclose(fileID);
 fclose(fileID2);
